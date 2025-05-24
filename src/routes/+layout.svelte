@@ -6,17 +6,14 @@
   let { children } = $props()
 </script>
 
-<ModeWatcher
-  defaultMode="dark"
-  on:modeChange={(e) => {
-    document.documentElement.setAttribute('data-theme', e.detail.mode)
-  }}
-/>
+<ModeWatcher defaultMode="dark" />
+
 <header class="flex h-16 items-center justify-between px-4">
-  <h1 class="text-2xl font-bold">Clock Wall</h1>
+  <h1 class="text-2xl font-bold">Clocks Wall</h1>
   <nav></nav>
   <ThemeToggle />
 </header>
-<main class="flex flex-col items-center justify-center h-full gap-6">
+
+<main class="container flex h-full flex-col items-center justify-center gap-6">
   {@render children?.()}
 </main>
