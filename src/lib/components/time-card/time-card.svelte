@@ -23,7 +23,7 @@
   })
 </script>
 
-<Card.Root class="bg-muted dark:bg-muted/50 w-full flex-1 shadow-none p-2 gap-2">
+<Card.Root class="bg-muted dark:bg-muted/50 w-full flex-1 gap-2 p-2 shadow-none">
   <Card.Header>
     <Card.Title class="flex items-center justify-between">
       <h2 class="text-lg font-semibold">

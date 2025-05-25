@@ -10,6 +10,7 @@ export interface GeoLocation {
   timezone: string
   isFavorite?: boolean
   isSelected?: boolean
+  utcDelta?: string // time difference from UTC in hours
 }
 
 export type GeocodingResponse = {

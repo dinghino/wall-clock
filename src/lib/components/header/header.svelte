@@ -3,7 +3,10 @@
   import LocationSearch from './location-search.svelte'
   import AppSettings from './settings.svelte'
 
-  import * as api from '$lib/location'
+  import AppCommand from '$components/app-command'
+
+  // import * as api from '$lib/location'
+
   export interface HeaderProps {
     title?: string
     navigation?: {
@@ -31,7 +34,8 @@
       </ul>
     </nav> -->
     <section class="flex flex-1 items-center justify-center space-x-4">
-      <LocationSearch onSearch={console.log} debounce={400} />
+      <!-- <LocationSearch onSearch={console.log} debounce={400} /> -->
+      <AppCommand />
     </section>
     <div>
       <ThemeToggle variant="ghost" />
