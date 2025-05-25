@@ -1,19 +1,21 @@
 <script lang="ts">
   import '../app.css'
   import { ModeWatcher } from 'mode-watcher'
-  import ThemeToggle from '$lib/components/theme-toggle'
+  import { Header } from '$components/header'
+  // register the dayjs plugin globally
+  import '$lib/dayjs'
 
   let { children } = $props()
 </script>
 
+<svelte:head>
+  <title>Clocks Wall</title>
+</svelte:head>
+
 <ModeWatcher defaultMode="dark" />
 
-<header class="flex h-16 items-center justify-between px-4">
-  <h1 class="text-2xl font-bold">Clocks Wall</h1>
-  <nav></nav>
-  <ThemeToggle />
-</header>
+<Header title="🕒" />
 
-<main class="container flex h-full flex-col items-center justify-center gap-6">
+<main class="flex flex-1 flex-col gap-6 overflow-auto p-6">
   {@render children?.()}
 </main>

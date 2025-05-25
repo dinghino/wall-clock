@@ -1,10 +1,9 @@
 <script lang="ts">
   import ThemeToggle from '$components/theme-toggle'
+  import LocationSearch from './location-search.svelte'
+  import AppSettings from './settings.svelte'
 
-  import { Input } from '$components/ui/input'
-  import { Button } from '$components/ui/button'
-  import { MapPin, Search } from '@lucide/svelte'
-
+  import * as api from '$lib/location'
   export interface HeaderProps {
     title?: string
     navigation?: {
@@ -16,24 +15,27 @@
   const { title = 'Clocks Wall', navigation = [] }: HeaderProps = $props()
 </script>
 
-<header class="flex h-16 items-center justify-between border-b px-4">
-  <h1 class="text-2xl font-bold">{title}</h1>
-  <nav>
-    <ul class="flex space-x-4">
-      {#each navigation as { label, href }}
-        <li>
-          <a {href} class="text-blue-500 hover:underline">{label}</a>
-        </li>
-      {/each}
-    </ul>
-  </nav>
-  <section class="flex items-center space-x-4">
-    <div class="relative flex">
-      <Search class="absolute left-2 top-1/2 -translate-y-1/2 size-4 text-gray-500" />
-      <Input placeholder="Add Location..." class="pl-8" />
+<!-- <header class="bg-background sticky top-0 z-10 border-b"> -->
+<header
+  class="border-border/90 bg-background/95 supports-[backdrop-filter]:bg-background/75 sticky top-0 z-50 w-full border-b backdrop-blur-md"
+>
+  <div class="container mx-auto flex h-16 flex-row items-center justify-between gap-4 px-4">
+    <h1 class="text-2xl font-bold">{title}</h1>
+    <!-- <nav>
+      <ul class="flex space-x-4">
+        {#each navigation as { label, href }}
+          <li>
+            <a {href} class="text-blue-500 hover:underline">{label}</a>
+          </li>
+        {/each}
+      </ul>
+    </nav> -->
+    <section class="flex flex-1 items-center justify-center space-x-4">
+      <LocationSearch onSearch={console.log} debounce={400} />
+    </section>
+    <div>
+      <ThemeToggle variant="ghost" />
+      <AppSettings />
     </div>
-    <Button><Search /></Button>
-    <Button variant="secondary"><MapPin /></Button>
-    <ThemeToggle variant="ghost" />
-  </section>
+  </div>
 </header>
