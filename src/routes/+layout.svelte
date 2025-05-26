@@ -4,6 +4,9 @@
   import { Header } from '$components/header'
   // register the dayjs plugin globally
   import '$lib/dayjs'
+  // import locations from '$lib/stores/location.svelte'
+
+  // locations.init()
 
   let { children } = $props()
 </script>

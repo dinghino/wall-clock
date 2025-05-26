@@ -8,7 +8,7 @@ import dayjs from 'dayjs'
  * @see {@link GeoLocation} internal type
  * @see {@link GeocodingResponse} open-meteo response
  */
-export async function searchLocations(query: string): Promise<GeoLocation[]> {
+export async function search(query: string): Promise<GeoLocation[]> {
   try {
     const response = await fetch(
       `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=en&format=json`
