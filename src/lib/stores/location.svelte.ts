@@ -65,6 +65,23 @@ class LocationStore {
       this.add(location)
     }
   }
+  toggleFavorite = (location: GeoLocation|string) => {
+    // allow passing object or id only, for tests and convenience
+    const id = typeof location === 'string' ? location : location.id
+    
+    // idx of operated location
+    const index = this.#locations.findIndex((e) => e.id === id)
+    if (index === -1) return
+    
+    // find previous favorite and remove it. do it only if not this one
+    const prevIdx = this.#locations.findIndex((e) => e.isFavorite && e.id !== id)
+    if (prevIdx !== -1) {
+      this.#locations[prevIdx].isFavorite = false
+    }
+
+    this.#locations[index].isFavorite = !this.#locations[index].isFavorite
+    saveLocations(this.#locations)
+  }
 }
 const store = new LocationStore()
 export default store

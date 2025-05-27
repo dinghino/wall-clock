@@ -1,8 +1,11 @@
 <script lang="ts">
-  import TimeCard from '$components/time-card'
   import { fly } from 'svelte/transition'
+
   import locations from '$lib/stores/location.svelte'
- </script>
+  import TimeCard from '$components/time-card'
+
+  const location = $derived(locations.list[0])
+</script>
 
 {#if locations.list.length === 0}
   <div class="flex h-full flex-col items-center justify-center gap-16">
@@ -15,7 +18,8 @@
     {#each locations.list as location, i (location.id)}
       <div
         in:fly|global={{ y: 20, duration: 150, delay: 100 * i }}
-        class="flex w-full md:max-w-72"
+        out:fly|global={{ y: 20, duration: 150, delay: 100 * i }}
+        class="flex w-full md:max-w-96"
       >
         <TimeCard {location} />
       </div>

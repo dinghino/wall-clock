@@ -20,7 +20,7 @@
 
 <!-- <header class="bg-background sticky top-0 z-10 border-b"> -->
 <header
-  class="border-border/90 bg-background/95 supports-[backdrop-filter]:bg-background/75 sticky top-0 z-50 w-full border-b backdrop-blur-md"
+  class="border-border/50 bg-background/95 supports-[backdrop-filter]:bg-background/75 sticky top-0 z-50 w-full border-b backdrop-blur-md"
 >
   <div class="container mx-auto flex h-16 flex-row items-center justify-between gap-4 px-4">
     <h1 class="text-2xl font-bold">{title}</h1>

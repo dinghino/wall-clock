@@ -45,6 +45,7 @@
   "dependencies": {
     "dayjs": "^1.11.13",
     "mode-watcher": "1.0.7",
+    "openmeteo": "^1.2.0",
     "zod": "^3.25.28"
   }
 }

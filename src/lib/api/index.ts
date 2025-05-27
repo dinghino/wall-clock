@@ -1,7 +1,9 @@
 import * as location from './locations.api'
+import * as weather from './weather.api'
 
 export const api = {
-  location
+  location,
+  weather,
 }
 
 export default api
