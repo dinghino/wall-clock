@@ -13,6 +13,7 @@
   import api from '$lib/api'
   import WeatherIcon from '../weather-icon.svelte'
   import { cn } from '$lib/utils'
+  import SimpleWeather from './simple-weather.svelte'
 
   export interface TimeCardProps {
     location: GeoLocation
@@ -34,12 +35,14 @@
     interval = setInterval(updateTime, 1000)
     return () => clearInterval(interval)
   })
+
+  const showOnHoverClass = 'opacity-0 transition-opacity duration-200 group-hover/card:opacity-100'
 </script>
 
 <Card.Root
-  class="group dark:bg-muted/20 border-muted-foreground/20 hover:border-muted-foreground/30 w-full flex-1 gap-0 rounded-sm p-0 shadow-none transition-all duration-200 ease-in-out"
+  class="group/card dark:bg-muted/20 border-muted-foreground/20 hover:border-muted-foreground/30 w-full flex-1 gap-0 overflow-hidden rounded-sm p-0 shadow-none transition-all duration-200 ease-in-out"
 >
-  <Card.Header class="bg-accent/50 flex items-center justify-between px-4 py-4">
+  <Card.Header class="dark:bg-accent/20 bg-accent flex items-center justify-between px-4 py-2">
     <Card.Title class="flex flex-row items-center gap-4">
       <div class="grid place-items-center">
         <MapPin class="stroke-muted-foreground size-4" />
@@ -54,7 +57,7 @@
         </span>
       </div>
     </Card.Title>
-    <div class="flex items-center gap-0">
+    <div class={cn('flex items-center gap-0', showOnHoverClass)}>
       <Button
         variant="ghost"
         class="rounded-md"
@@ -79,61 +82,24 @@
     </div>
   </Card.Header>
   <Separator class="mt-0" />
-  <Card.Content class="flex flex-col gap-2 px-2 pt-4 font-mono">
-    <p class="text-muted-foreground text-center text-xl">{time.format('dddd')}</p>
-    <time class="w-full text-center text-7xl" datetime={time.toISOString()}>
-      <span>{time.format('HH:mm')}</span>
-    </time>
-    <div class="flex flex-col items-center text-xs">
-      <p class="text-muted-foreground font-thin">
-        {location.timezone.replaceAll('_', ' ')}
-      </p>
-      <p class="text-muted-foreground mr-2">UTC {time?.format('Z')}</p>
-    </div>
-  </Card.Content>
-  {#await api.weather.getWeatherData(location)}
-    <Card.Content class="flex items-center justify-center p-4">
-      <p class="text-muted-foreground">Loading weather...</p>
-    </Card.Content>
-  {:then response}
-    {@const weather = response[0]}
-    <Card.Content class="py-4">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <WeatherIcon code={weather.current.weatherCode} size="md" className="text-primary" />
-          <div class="text-3xl font-light">{weather.current.temperature2m.toFixed()}°</div>
+  <div class="flex flex-row md:flex-col">
+    <Card.Content class="flex flex-1 flex-row gap-2 p-4 px-2 font-mono md:flex-col">
+      <!-- <section class="flex flex-1 flex-col gap-2" data-role="time"> -->
+      <section class="grid flex-1 place-items-center gap-4" data-role="time">
+        <p class="text-muted-foreground text-center text-xl">{time.format('dddd')}</p>
+        <time class="w-full text-center text-7xl" datetime={time.toISOString()}>
+          <span>{time.format('HH:mm')}</span>
+        </time>
+        <div class="flex flex-col items-center text-xs">
+          <p class="text-muted-foreground font-thin">
+            {location.timezone.replaceAll('_', ' ')}
+          </p>
+          <p class="text-muted-foreground mr-2">UTC {time?.format('Z')}</p>
         </div>
-        <div class="text-right">
-          <!-- <div class="text-sm">
-            <span class="font-medium">{weather.daily.temperature2mMax.toFixed()}° /</span>
-            <span class="text-neutral-500">{weather.daily.temperature2mMin}°</span>
-          </div> -->
-          <div class="text-sm text-neutral-500">
-            {weather.current.weatherCode}
-          </div>
-        </div>
-      </div>
+      </section>
     </Card.Content>
-  {:catch error}
-    <Card.Content class="flex items-center justify-center p-4">
-      <p class="text-red-500">Error loading weather: {error.message}</p>
+    <Card.Content class="flex flex-col m-4 min-h-16 shrink-0 items-stretch justify-between gap-4 p-2">
+      <SimpleWeather {location} />
     </Card.Content>
-  {/await}
-  <!-- <Separator /> -->
-  <!-- <Card.Footer class="flex justify-between px-2 pb-2 text-xs opacity-0 group-hover:opacity-100 ">
-    <div class="items-Heartt flex flex-col justify-end text-xs">
-      <p class="text-muted-foreground font-thin">
-        {location.timezone.replaceAll('_', ' ')}
-      </p>
-      <p class="text-muted-foreground mr-2">UTC {time?.format('Z')}</p>
-    </div>
-    <div class="flex items-center gap-1">
-      <Button variant="ghost" size="icon">
-        <Heart class="size-4 stroke-amber-500" />
-      </Button>
-      <Button variant="ghost" size="icon" onclick={() => locations.remove(location.id)}>
-        <Trash class="size-4 stroke-red-500/50" />
-      </Button>
-    </div>
-  </Card.Footer> -->
+  </div>
 </Card.Root>

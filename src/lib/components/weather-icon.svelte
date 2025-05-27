@@ -13,7 +13,7 @@
 
   type WeatherIconProps = {
     code: number
-    size?: 'sm' | 'md' | 'lg' | 'xl'
+    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
     className?: string
   }
 
@@ -22,7 +22,8 @@
   const clsName = $derived(
     cn(
       {
-        'size-5': size === 'sm',
+        'size-4': size === 'xs',
+        'size-6': size === 'sm',
         'size-10': size === 'md',
         'size-16': size === 'lg',
         'size-24': size === 'xl'
@@ -32,14 +33,7 @@
   )
 </script>
 
-<div
-  class={cn('flex-shrink-0', {
-    // 'h-4 w-4': size === 'sm',
-    // 'h-6 w-6': size === 'md',
-    // 'h-10 w-10': size === 'lg',
-    // 'h-12 w-12': size === 'xl'
-  })}
->
+<div class={cn('flex-shrink-0', {})}>
   {#if code === 0 || code === 1}
     <Sun class={clsName} />
   {:else if code >= 2 && code <= 3}
