@@ -33,7 +33,7 @@
         {/each}
       </ul>
     </nav> -->
-    <section class="flex flex-1 items-center justify-center space-x-4">
+    <section class="flex flex-1 items-center justify-end space-x-4">
       <!-- <LocationSearch onSearch={console.log} debounce={400} /> -->
       <AppCommand />
     </section>
