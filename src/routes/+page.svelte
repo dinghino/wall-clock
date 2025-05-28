@@ -3,8 +3,6 @@
 
   import locations from '$lib/stores/location.svelte'
   import TimeCard from '$components/time-card'
-
-  const location = $derived(locations.list[0])
 </script>
 
 {#if locations.list.length === 0}
@@ -14,7 +12,7 @@
     <p class="text-lg text-gray-500">Search your first location to get started!</p>
   </div>
 {:else}
-  <div class="flex flex-row flex-wrap items-center justify-center gap-2">
+  <div class="container mx-auto flex flex-row flex-wrap items-start justify-center gap-3">
     {#each locations.list as location, i (location.id)}
       <div
         in:fly|global={{ y: 20, duration: 150, delay: 100 * i }}
