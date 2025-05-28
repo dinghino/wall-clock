@@ -1,6 +1,12 @@
 import { fetchWeatherApi } from 'openmeteo'
 import type { GeoLocation } from '$lib/types/location'
 
+// lib does not export the type. so sad.
+export type WeatherResponse = Awaited<ReturnType<typeof fetchWeatherApi>>[number]
+// note: some of these are duplicated in $lib/types/* we may want to check
+export type WeatherData = ReturnType<typeof parseWeatherResponse>
+export type DailyForecast = WeatherData['daily'][number]
+
 const url = 'https://api.open-meteo.com/v1/forecast'
 
 const params = {
@@ -36,9 +42,9 @@ export function makeRequestFor(location: GeoLocation) {
 export async function getWeatherData(location: GeoLocation) {
   return fetchWeatherApi(url, makeRequestFor(location))
     .then((data) => {
-      console.log(`weather data for ${location.name}:`, data)
+      // console.log(`weather data for ${location.name}:`, data)
       const parsed = data.map((i) => parseWeatherResponse(i))
-      console.log('Parsed weather data:', parsed)
+      // console.log('Parsed weather data:', parsed)
       return parsed
     })
     .catch((error) => {
@@ -47,8 +53,12 @@ export async function getWeatherData(location: GeoLocation) {
     })
 }
 
-// lib does not export the type. so sad.
-type WeatherResponse = Awaited<ReturnType<typeof fetchWeatherApi>>[number]
+// Helper function to form time ranges
+const range = (start: number | bigint, stop: number | bigint, step: number) => {
+  const s = Number(start)
+  const e = Number(stop)
+  return Array.from({ length: (e - s) / step }, (_, i) => s + i * step)
+}
 
 function parseCurrentWeather(data: NonNullable<ReturnType<WeatherResponse['current']>>) {
   return {
@@ -61,6 +71,42 @@ function parseCurrentWeather(data: NonNullable<ReturnType<WeatherResponse['curre
   }
 }
 
+function parseDailyForecast(
+  daily: NonNullable<ReturnType<WeatherResponse['daily']>>,
+  offset: number
+) {
+  const sunrise = daily.variables(1)!
+  const sunset = daily.variables(2)!
+
+  const data = {
+    time: range(daily.time(), daily.timeEnd(), daily.interval()).map(
+      (t) => new Date((t + offset) * 1000)
+    ),
+    temperature2mMax: daily.variables(0)!.valuesArray()!,
+    sunrise: Array.from(
+      { length: sunrise.valuesInt64Length() },
+      (_, i) => new Date((Number(sunrise.valuesInt64(i)) + offset) * 1000)
+    ),
+    sunset: Array.from(
+      { length: sunset.valuesInt64Length() },
+      (_, i) => new Date((Number(sunset.valuesInt64(i)) + offset) * 1000)
+    ),
+    temperature2mMin: daily.variables(3)!.valuesArray()!,
+    precipitationProbabilityMax: daily.variables(4)!.valuesArray()!,
+    weatherCode: daily.variables(5)!.valuesArray()!
+  } as const
+
+  return data.time.map((time, idx) => ({
+    time,
+    temperature2mMax: data.temperature2mMax[idx],
+    sunrise: data.sunrise[idx],
+    sunset: data.sunset[idx],
+    temperature2mMin: data.temperature2mMin[idx],
+    precipitationProbabilityMax: data.precipitationProbabilityMax[idx],
+    weatherCode: data.weatherCode[idx]
+  }))
+}
+
 function parseWeatherResponse(data: WeatherResponse) {
   const utcOffsetSeconds = data.utcOffsetSeconds()
   const timezone = data.timezone()
@@ -69,47 +115,8 @@ function parseWeatherResponse(data: WeatherResponse) {
   const longitude = data.longitude()
 
   const current = data.current()!
-  // const hourly = data.hourly()!
   const daily = data.daily()!
-
-  const sunrise = daily.variables(1)!
-  const sunset = daily.variables(2)!
-
-  // Build time arrays for hourly and daily
-  const buildTimeArray = (start: number, end: number, interval: number) =>
-    Array.from(
-      { length: (end - start) / interval },
-      (_, i) => new Date((start + i * interval + utcOffsetSeconds) * 1000)
-    )
-
-  const rawDailyData = {
-    time: buildTimeArray(Number(daily.time()), Number(daily.timeEnd()), daily.interval()),
-    temperature2mMax: daily.variables(0)!.valuesArray()!,
-    sunrise: Array.from(
-      { length: sunrise.valuesInt64Length() },
-      (_, i) => new Date((Number(sunrise.valuesInt64(i)) + utcOffsetSeconds) * 1000)
-    ),
-    sunset: Array.from(
-      { length: sunset.valuesInt64Length() },
-      (_, i) => new Date((Number(sunset.valuesInt64(i)) + utcOffsetSeconds) * 1000)
-    ),
-    temperature2mMin: daily.variables(3)!.valuesArray()!,
-    precipitationProbabilityMax: daily.variables(4)!.valuesArray()!,
-    weatherCode: daily.variables(5)!.valuesArray()!
-  } as const
-
-  // daily data is an array of objects where each object has the same keys as rawDailyData
-  // and the values of each array at the index correspond to the same day
-
-  const dailyData = rawDailyData.time.map((time, idx) => ({
-    time,
-    temperature2mMax: rawDailyData.temperature2mMax[idx],
-    sunrise: rawDailyData.sunrise[idx],
-    sunset: rawDailyData.sunset[idx],
-    temperature2mMin: rawDailyData.temperature2mMin[idx],
-    precipitationProbabilityMax: rawDailyData.precipitationProbabilityMax[idx],
-    weatherCode: rawDailyData.weatherCode[idx]
-  }))
+  // const hourly = data.hourly()!
 
   return {
     utcOffsetSeconds,
@@ -121,19 +128,19 @@ function parseWeatherResponse(data: WeatherResponse) {
       time: new Date((Number(current.time()) + utcOffsetSeconds) * 1000),
       ...parseCurrentWeather(current)
     },
-    // hourly: {
-    //   time: buildTimeArray(Number(hourly.time()), Number(hourly.timeEnd()), hourly.interval()),
-    //   temperature2m: hourly.variables(0)!.valuesArray()!,
-    //   precipitation: hourly.variables(1)!.valuesArray()!,
-    //   precipitationProbability: hourly.variables(2)!.valuesArray()!,
-    //   weatherCode: hourly.variables(3)!.valuesArray()!
-    // },
-    daily: dailyData
+    hourly: {
+      // time: buildTimeArray(Number(hourly.time()), Number(hourly.timeEnd()), hourly.interval()),
+      // time: range(hourly.time(), hourly.timeEnd(), hourly.interval()).map(
+      //   (t) => new Date((Number(t) + utcOffsetSeconds) * 1000)
+      // )
+      //   temperature2m: hourly.variables(0)!.valuesArray()!,
+      //   precipitation: hourly.variables(1)!.valuesArray()!,
+      //   precipitationProbability: hourly.variables(2)!.valuesArray()!,
+      //   weatherCode: hourly.variables(3)!.valuesArray()!
+    },
+    daily: parseDailyForecast(daily, utcOffsetSeconds)
   }
 }
-
-export type WeatherData = ReturnType<typeof parseWeatherResponse>
-export type DailyForecast = WeatherData['daily'][number]
 
 // Map WMO weather codes to descriptions
 // https://www.nodc.noaa.gov/archive/arc0021/0002199/1.1/data/0-data/HTML/WMO-CODE/WMO4677.HTM

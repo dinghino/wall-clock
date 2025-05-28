@@ -28,12 +28,17 @@ class LocationStore {
     this.#locations = loadLocations()
   }
 
-  get list() {
-    return this.#locations.sort((a, b) => {
+  #setLocations(locations: GeoLocation[]) {
+    this.#locations = locations.sort((a, b) => {
       if (a.isFavorite && !b.isFavorite) return -1
       if (!a.isFavorite && b.isFavorite) return 1
       return a.name.localeCompare(b.name)
     })
+    saveLocations(this.#locations)
+  }
+
+  get list() {
+    return this.#locations
   }
 
   add = (location: GeoLocation) => {
@@ -44,17 +49,15 @@ class LocationStore {
   }
 
   remove = (id: string) => {
-    this.#locations = this.#locations.filter((e) => e.id !== id)
-    saveLocations(this.#locations)
+    this.#setLocations(this.#locations.filter((e) => e.id !== id))
   }
 
   set = (entries: GeoLocation[]) => {
-    this.#locations = entries
+    this.#setLocations(entries)
   }
 
   clear = () => {
-    this.#locations = []
-    saveLocations(this.#locations)
+    this.#setLocations([])
   }
 
   has = (location: GeoLocation | string) => {
@@ -77,14 +80,18 @@ class LocationStore {
     const index = this.#locations.findIndex((e) => e.id === id)
     if (index === -1) return
 
-    // find previous favorite and remove it. do it only if not this one
-    const prevIdx = this.#locations.findIndex((e) => e.isFavorite && e.id !== id)
-    if (prevIdx !== -1) {
-      this.#locations[prevIdx].isFavorite = false
-    }
-
-    this.#locations[index].isFavorite = !this.#locations[index].isFavorite
-    saveLocations(this.#locations)
+    const updated = this.#locations.map((loc, i) => {
+      if (i === index) {
+        // Toggle favorite for this location
+        return { ...loc, isFavorite: !loc.isFavorite }
+      }
+      // Remove favorite from any other location
+      if (loc.isFavorite && loc.id !== id) {
+        return { ...loc, isFavorite: false }
+      }
+      return loc
+    })
+    this.#setLocations(updated)
   }
 }
 const store = new LocationStore()

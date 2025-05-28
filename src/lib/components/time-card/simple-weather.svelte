@@ -32,6 +32,7 @@
   </div>
 {:then response}
   {#each response as { current, daily }, _ (current.time)}
+    <!-- weather data. first element is current weather summary -->
     <div
       class="group/weather dark:bg-accent/50 bg-accent relative flex flex-col items-center justify-between gap-4 rounded-sm p-4 md:flex-row"
     >
@@ -51,6 +52,7 @@
         </Button>
       </div>
     </div>
+    <!-- daily forecast -->
     <div class="hidden flex-row justify-between gap-2 md:flex md:flex-nowrap">
       {#each daily as day, i (day.time)}
         <div

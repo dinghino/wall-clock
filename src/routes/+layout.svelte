@@ -16,6 +16,6 @@
 
 <Header title="🕒" />
 
-<main class="flex flex-1 flex-col gap-6 overflow-auto min-h-[calc(100dvh - 65px)] p-6">
+<main class="flex flex-1 flex-col gap-6 overflow-auto p-6">
   {@render children?.()}
 </main>

@@ -1,105 +1,147 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import { MapPin, Heart, Trash, MoreHorizontal } from '@lucide/svelte'
-
-  import dayjs from 'dayjs'
+  import { onMount, type Snippet } from 'svelte'
+  import {
+    MapPin,
+    MoreHorizontal,
+    Loader,
+    RefreshCwIcon,
+    SunIcon,
+    MoonStarIcon,
+    ClockIcon,
+    CloudSunRain
+  } from '@lucide/svelte'
+  import { cn } from '$lib/utils'
   import type { GeoLocation } from '$lib/types/location'
+
   import locations from '$lib/stores/location.svelte'
 
   import * as Card from '$components/ui/card'
+  import * as Tabs from '$components/ui/tabs'
   import { Button } from '$components/ui/button'
   import { Separator } from '$components/ui/separator'
 
-  import api from '$lib/api'
-  import WeatherIcon from '../weather-icon.svelte'
-  import { cn } from '$lib/utils'
-  import SimpleWeather from './simple-weather.svelte'
+  import api, { type WeatherData } from '$lib/api'
+
+  import WeatherCardHeader from './card-header.svelte'
+  import CurrentWeather from './current-weather.svelte'
+  import DailyForecast from './daily-forecast.svelte'
+  import CardSection from './card-section.svelte'
+  import Actions from './actions'
+  import Clock from './clock.svelte'
 
   export interface TimeCardProps {
     location: GeoLocation
   }
 
   const { location }: TimeCardProps = $props()
-
   const timezone = $derived(location.timezone)
-  let now = $state(dayjs.utc())
-  let time = $derived(now.tz(timezone))
 
-  function updateTime() {
-    now = dayjs.utc()
+  async function getData() {
+    return api.weather.getWeatherData(location)
   }
-
-  let interval: number | undefined
+  let weatherTick: number | undefined
   onMount(() => {
-    updateTime()
-    interval = setInterval(updateTime, 1000)
-    return () => clearInterval(interval)
+    weatherTick = setInterval(() => (weather = getData()), 15 * 60 * 1000) // update every 15 minutes
+    return () => clearInterval(weatherTick)
   })
 
-  const showOnHoverClass = 'opacity-0 transition-opacity duration-200 group-hover/card:opacity-100'
+  let weather = $state(getData())
+
+  function handleRefresh() {
+    weather = getData()
+  }
 </script>
 
 <Card.Root
-  class="group/card dark:bg-muted/20 border-muted-foreground/20 hover:border-muted-foreground/30 w-full flex-1 gap-0 overflow-hidden rounded-sm p-0 shadow-none transition-all duration-200 ease-in-out"
+  class="group/card dark:bg-muted/20 border-muted-foreground/10 hover:border-muted-foreground/50 w-full flex-1 gap-0 overflow-hidden rounded-md p-0 shadow-none transition-all duration-200 ease-in-out"
 >
-  <Card.Header class="dark:bg-accent/20 bg-accent flex items-center justify-between px-4 py-2">
-    <Card.Title class="flex flex-row items-center gap-4">
-      <div class="grid place-items-center">
-        <MapPin class="stroke-muted-foreground size-4" />
-      </div>
-
-      <div>
+  <Tabs.Root value="time" class="gap-0">
+    <WeatherCardHeader {location} background="accent" visibility="dynamic">
+      {#snippet icon()}
+        <!-- renders the day/night icon or the map pin if we are still fetching -->
+        {#await weather}
+          <MapPin class="stroke-muted-foreground size-5" />
+        {:then response}
+          {@const data = response[0].current}
+          {@const isday = typeof data.isDay === 'boolean' ? data.isDay : data.isDay > 0}
+          {@const Icon = isday ? SunIcon : MoonStarIcon}
+          {@const color = isday ? 'stroke-amber-500' : 'stroke-sky-500'}
+          <Icon class={cn('size-5', color, 'stroke-[1.5px]')} />
+        {:catch}
+          <MapPin class="size-5 stroke-red-500" />
+        {/await}
+      {/snippet}
+      {#snippet title()}
         <h2 class="text-xl font-semibold">
           {location.name}
         </h2>
         <span class="text-muted-foreground text-xs">
           {location.admin1}{#if location.country}, {location.country}{/if}
         </span>
+      {/snippet}
+      {#snippet actions()}
+        {@const favorite = location.isFavorite}
+        <Actions.Favorite {favorite} onclick={() => locations.toggleFavorite(location.id)} />
+        <Actions.Delete onclick={() => locations.remove(location.id)} />
+        <Button variant="ghost" class="rounded-md" size="icon" onclick={() => handleRefresh()}>
+          <RefreshCwIcon class="stroke-muted-foreground s size-4" />
+        </Button>
+        <Button variant="ghost" class="rounded-md" size="icon" disabled>
+          <MoreHorizontal class="stroke-muted-foreground size-4" />
+        </Button>
+      {/snippet}
+    </WeatherCardHeader>
+
+    <Tabs.List class="bg-accent dark:bg-accent/50 w-full flex-1 rounded-none">
+      <Tabs.Trigger value="time" class="flex items-center gap-2 rounded-xs text-xs">
+        <ClockIcon class="stroke-muted-foreground" />Time
+      </Tabs.Trigger>
+      <Tabs.Trigger value="weather" class="flex items-center gap-2 rounded-xs text-xs">
+        <CloudSunRain class="stroke-muted-foreground" />Weather
+      </Tabs.Trigger>
+    </Tabs.List>
+    <Separator class="mt-0" />
+    <!-- clock section -->
+    <Tabs.Content value="time" class="flex-1">
+      <div class="flex flex-row md:flex-col">
+        <Card.Content class="flex flex-1 flex-row gap-2 p-4 px-2 font-mono md:flex-col">
+          <Clock {timezone} />
+        </Card.Content>
+        {#await weather then response}
+          {@const data = response[0].current}
+          <CardSection class="group/weather m-4 md:flex-row">
+            <CurrentWeather {data} />
+          </CardSection>
+        {/await}
       </div>
-    </Card.Title>
-    <div class={cn('flex items-center gap-0', showOnHoverClass)}>
-      <Button
-        variant="ghost"
-        class="rounded-md"
-        size="icon"
-        onclick={() => locations.toggleFavorite(location)}
+    </Tabs.Content>
+    <!-- weather section -->
+    <Tabs.Content value="weather" class="flex-1">
+      <Card.Content
+        class="m-4 flex min-h-16 shrink-0 flex-col items-stretch justify-between gap-4 p-2"
       >
-        <Heart
-          class={cn('size-4 stroke-red-500 stroke-1', { 'fill-red-500/75': location.isFavorite })}
-        />
-      </Button>
-      <Button
-        variant="ghost"
-        class="rounded-md"
-        size="icon"
-        onclick={() => locations.remove(location.id)}
-      >
-        <Trash class="stroke-muted-foreground size-4" />
-      </Button>
-      <Button variant="ghost" class="rounded-md" size="icon" disabled>
-        <MoreHorizontal class="stroke-muted-foreground size-4" />
-      </Button>
-    </div>
-  </Card.Header>
-  <Separator class="mt-0" />
-  <div class="flex flex-row md:flex-col">
-    <Card.Content class="flex flex-1 flex-row gap-2 p-4 px-2 font-mono md:flex-col">
-      <!-- <section class="flex flex-1 flex-col gap-2" data-role="time"> -->
-      <section class="grid flex-1 place-items-center gap-4" data-role="time">
-        <p class="text-muted-foreground text-center text-xl">{time.format('dddd')}</p>
-        <time class="w-full text-center text-7xl" datetime={time.toISOString()}>
-          <span>{time.format('HH:mm')}</span>
-        </time>
-        <div class="flex flex-col items-center text-xs">
-          <p class="text-muted-foreground font-thin">
-            {location.timezone.replaceAll('_', ' ')}
-          </p>
-          <p class="text-muted-foreground mr-2">UTC {time?.format('Z')}</p>
-        </div>
-      </section>
-    </Card.Content>
-    <Card.Content class="flex flex-col m-4 min-h-16 shrink-0 items-stretch justify-between gap-4 p-2">
-      <SimpleWeather {location} />
-    </Card.Content>
-  </div>
+        {#await weather}
+          <CardSection>
+            <div class="grid h-32 w-full place-items-center">
+              <Loader class="text-primary size-6 animate-spin" />
+            </div>
+          </CardSection>
+        {:then response}
+          {#each response as data, i}
+            {#if i > 0}
+              <Separator class="my-2" />
+            {/if}
+            <CardSection class="group/weather">
+              <CurrentWeather data={data.current} layout="horizontal" />
+            </CardSection>
+            <DailyForecast daily={data.daily} />
+          {/each}
+        {:catch error}
+          <div class="grid h-full w-full place-items-center">
+            <p class="text-red-500">Error loading weather: {error.message}</p>
+          </div>
+        {/await}
+      </Card.Content>
+    </Tabs.Content>
+  </Tabs.Root>
 </Card.Root>
