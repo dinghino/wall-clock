@@ -29,7 +29,11 @@ class LocationStore {
   }
 
   get list() {
-    return this.#locations
+    return this.#locations.sort((a, b) => {
+      if (a.isFavorite && !b.isFavorite) return -1
+      if (!a.isFavorite && b.isFavorite) return 1
+      return a.name.localeCompare(b.name)
+    })
   }
 
   add = (location: GeoLocation) => {
@@ -65,14 +69,14 @@ class LocationStore {
       this.add(location)
     }
   }
-  toggleFavorite = (location: GeoLocation|string) => {
+  toggleFavorite = (location: GeoLocation | string) => {
     // allow passing object or id only, for tests and convenience
     const id = typeof location === 'string' ? location : location.id
-    
+
     // idx of operated location
     const index = this.#locations.findIndex((e) => e.id === id)
     if (index === -1) return
-    
+
     // find previous favorite and remove it. do it only if not this one
     const prevIdx = this.#locations.findIndex((e) => e.isFavorite && e.id !== id)
     if (prevIdx !== -1) {
