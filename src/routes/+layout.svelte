@@ -4,6 +4,7 @@
   import { Header } from '$components/header'
   // register the dayjs plugin globally
   import '$lib/dayjs'
+  import { TooltipProvider } from '$lib/components/ui/tooltip'
 
   let { children } = $props()
 </script>
@@ -17,5 +18,7 @@
 <Header title="🕒" />
 
 <main class="flex flex-1 flex-col gap-6 overflow-auto p-6">
-  {@render children?.()}
+  <TooltipProvider>
+    {@render children?.()}
+  </TooltipProvider>
 </main>

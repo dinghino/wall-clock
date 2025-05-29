@@ -19,6 +19,7 @@
   import Clock from './clock'
   import WeatherDialog from './weather-dialog.svelte'
   import { CurrentWeather } from '$lib/components/weather'
+  import dayjs from 'dayjs'
 
   export interface TimeCardProps {
     location: GeoLocation
@@ -56,7 +57,7 @@
   <WeatherCardHeader {location} background="accent" visibility="dynamic" {icon} {title} {actions} />
 
   <Card.Content class=" relative flex flex-1 flex-row gap-2 p-4 px-2 font-mono">
-    <Clock {timezone} show={{ utc: true, date: false, timezone: false }} />
+    <Clock {timezone} show={{ utc: false, date: false, timezone: false }} />
     {#await weather then response}
       {@const data = response[0]}
       <WeatherDialog {location} {data}>
@@ -88,12 +89,17 @@
   {/await}
 {/snippet}
 {#snippet title()}
-  <h2 class="text-xl font-semibold">
-    {location.name}
-  </h2>
-  <span class="text-muted-foreground text-[10px]">
-    {location.admin1}{#if location.country}, {location.country}{/if}
-  </span>
+  <div class="flex flex-col gap-0 mb-2">
+    <h2 class="text-xl font-semibold">
+      {location.name}
+    </h2>
+    <p class="text-muted-foreground text-[10px]">
+      {location.admin1}{#if location.country}, {location.country}{/if}
+    </p>
+  </div>
+  <p class="text-muted-foreground text-[12px]">
+    UTC {dayjs.utc().tz(timezone).format('Z')}
+  </p>
 {/snippet}
 {#snippet actions()}
   {@const favorite = location.isFavorite}

@@ -17,34 +17,32 @@
   const { icon: Icon, title, data, class: className }: WeatherDetailProps = $props()
 </script>
 
-<Tooltip.Provider>
-  <Tooltip.Root>
-    <Tooltip.Trigger>
-      <div
-        class={cn(
-          'group/detail',
-          'dark:bg-accent/50 bg-accent rounded-sm p-4',
-          'shadow-none shadow-black/10 hover:shadow-lg dark:shadow-black/20',
-          'transition-all duration-250 ease-in-out',
-          'shrink-1',
-          'flex flex-col items-start justify-between gap-2',
-          className
-        )}
-      >
-        <!-- <span class="text-start text-xs text-neutral-500">{title}</span> -->
+<Tooltip.Root>
+  <Tooltip.Trigger>
+    <div
+      class={cn(
+        'group/detail',
+        'dark:bg-accent/50 bg-accent rounded-sm p-4',
+        'shadow-none shadow-black/10 hover:shadow-lg dark:shadow-black/20',
+        'transition-all duration-250 ease-in-out',
+        'shrink-1',
+        'flex flex-col items-start justify-between gap-2',
+        className
+      )}
+    >
+      <!-- <span class="text-start text-xs text-neutral-500">{title}</span> -->
 
-        <div class="flex w-full flex-1 items-center justify-between gap-2">
-          {#if Icon}
-            <Icon
-              class="group-hover/detail:stroke-primary stroke-2 stroke-muted-foreground/50 size-6 transition-colors duration-200"
-            />
-          {/if}
-          <span class="text-sm font-thin text-nowrap">{data}</span>
-        </div>
+      <div class="flex w-full flex-1 items-center justify-between gap-2">
+        {#if Icon}
+          <Icon
+            class="group-hover/detail:stroke-primary stroke-muted-foreground/50 size-6 stroke-2 transition-colors duration-200"
+          />
+        {/if}
+        <span class="text-sm font-thin text-nowrap">{data}</span>
       </div>
-    </Tooltip.Trigger>
-    <Tooltip.Content>
-      <p>{title}</p>
-    </Tooltip.Content>
-  </Tooltip.Root>
-</Tooltip.Provider>
+    </div>
+  </Tooltip.Trigger>
+  <Tooltip.Content>
+    <p>{title}</p>
+  </Tooltip.Content>
+</Tooltip.Root>
