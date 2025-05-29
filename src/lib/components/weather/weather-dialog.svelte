@@ -19,7 +19,6 @@
 
   let { location, data, class: className, trigger, current }: Props = $props()
 
-  console.log(location.name, data)
 </script>
 
 <Dialog.Root>
