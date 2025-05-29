@@ -49,18 +49,18 @@
   function handleRefresh() {
     weather = getData()
   }
-</script>
 
-<Card.Root
-  class={cn(
+  const rootCls = cn(
     'relative',
     'group/card',
     'dark:bg-muted/20 bg-muted/30',
     'border-primary/10 hover:border-muted-foreground/20',
     'w-full flex-1 gap-0 overflow-hidden rounded-md p-0',
     'shadow-none transition-all duration-200 ease-in-out'
-  )}
->
+  )
+</script>
+
+<Card.Root class={rootCls}>
   <WeatherCardHeader
     {location}
     background="default"
@@ -122,7 +122,7 @@
 {#snippet actions()}
   {@const favorite = location.isFavorite}
   <div
-    class="bg-accent text-accent-foreground absolute -right-28 rounded-l-md duration-200 ease-in-out group-hover/card:right-0 shadow-none group-hover/card:shadow-md"
+    class="bg-accent text-accent-foreground absolute -right-28 rounded-l-md shadow-none duration-200 ease-in-out group-hover/card:right-0 group-hover/card:shadow-md"
   >
     <Actions.Favorite {favorite} onclick={() => locations.toggleFavorite(location.id)} />
     <Actions.Delete onclick={() => locations.remove(location.id)} />

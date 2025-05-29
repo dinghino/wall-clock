@@ -17,7 +17,7 @@
 
 <Header title="🕒" />
 
-<main class="flex flex-1 flex-col gap-6 overflow-auto p-6">
+<main >
   <TooltipProvider>
     {@render children?.()}
   </TooltipProvider>

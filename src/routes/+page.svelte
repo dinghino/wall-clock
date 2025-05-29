@@ -4,9 +4,20 @@
   import locations from '$lib/stores/location.svelte'
   import TimeCard from '$components/time-card'
   import { Loader } from '@lucide/svelte'
+  import { cn } from '$lib/utils'
 </script>
 
-<section class="container mx-auto flex flex-row flex-wrap items-start justify-center gap-3">
+<section
+  class={cn(
+    'container mx-auto gap-2 px-4 pt-4',
+    // 'flex flex-row flex-wrap items-start justify-start',
+    'grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4',
+    {
+      'h-screen': locations.loading || locations.count === 0,
+      'h-auto': !locations.loading && locations.count > 0
+    }
+  )}
+>
   {#if locations.loading}
     <div class="grid place-items-center gap-16">
       <Loader class="text-primary size-10 animate-spin" />
