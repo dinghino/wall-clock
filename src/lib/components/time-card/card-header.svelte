@@ -1,12 +1,10 @@
 <script lang="ts">
   import type { Snippet } from 'svelte'
 
-  import { Heart, Trash, MoreHorizontal, RefreshCwIcon } from '@lucide/svelte'
   import type { GeoLocation } from '$lib/types/location'
   import { cn } from '$lib/utils'
 
   import * as Card from '$components/ui/card'
-  import { Button } from '$components/ui/button'
   import { tv, type VariantProps } from 'tailwind-variants'
 
   const variants = tv({

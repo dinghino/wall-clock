@@ -5,28 +5,35 @@ import type { GeoLocation } from '$lib/types/location'
 export type WeatherResponse = Awaited<ReturnType<typeof fetchWeatherApi>>[number]
 // note: some of these are duplicated in $lib/types/* we may want to check
 export type WeatherData = ReturnType<typeof parseWeatherResponse>
+
+export type CurrentWeather = WeatherData['current']
 export type DailyForecast = WeatherData['daily'][number]
+export type HourlyForecast = WeatherData['hourly']
 
 const url = 'https://api.open-meteo.com/v1/forecast'
 
 const params = {
   forecast_days: 4,
   daily: [
-    'temperature_2m_max',
+    'weather_code',
     'sunrise',
     'sunset',
-    'temperature_2m_min',
     'precipitation_probability_max',
-    'weather_code'
+    'temperature_2m_max',
+    'temperature_2m_min',
+    'uv_index_max',
+    'relative_humidity_2m_mean',
   ],
   // hourly: ['temperature_2m', 'precipitation', 'precipitation_probability', 'weather_code'],
   current: [
-    'temperature_2m',
     'weather_code',
+    'temperature_2m',
     'is_day',
     'apparent_temperature',
     'relative_humidity_2m',
-    'precipitation'
+    'precipitation',
+    'rain',
+    'wind_speed_10m'
   ]
 }
 
@@ -62,12 +69,14 @@ const range = (start: number | bigint, stop: number | bigint, step: number) => {
 
 function parseCurrentWeather(data: NonNullable<ReturnType<WeatherResponse['current']>>) {
   return {
-    temperature2m: data.variables(0)!.value(),
-    weatherCode: data.variables(1)!.value(),
+    weatherCode: data.variables(0)!.value(),
+    temperature2m: data.variables(1)!.value(),
     isDay: data.variables(2)!.value(),
     apparentTemperature: data.variables(3)!.value(),
-    relativeHumidity2m: data.variables(4)!.value(),
-    precipitation: data.variables(5)!.value()
+    humidity: data.variables(4)!.value(),
+    precipitation: data.variables(5)!.value(),
+    rain: data.variables(6)!.value(),
+    windSpeed: data.variables(7)!.value()
   }
 }
 
@@ -82,7 +91,7 @@ function parseDailyForecast(
     time: range(daily.time(), daily.timeEnd(), daily.interval()).map(
       (t) => new Date((t + offset) * 1000)
     ),
-    temperature2mMax: daily.variables(0)!.valuesArray()!,
+    weatherCode: daily.variables(0)!.valuesArray()!,
     sunrise: Array.from(
       { length: sunrise.valuesInt64Length() },
       (_, i) => new Date((Number(sunrise.valuesInt64(i)) + offset) * 1000)
@@ -91,19 +100,25 @@ function parseDailyForecast(
       { length: sunset.valuesInt64Length() },
       (_, i) => new Date((Number(sunset.valuesInt64(i)) + offset) * 1000)
     ),
-    temperature2mMin: daily.variables(3)!.valuesArray()!,
-    precipitationProbabilityMax: daily.variables(4)!.valuesArray()!,
-    weatherCode: daily.variables(5)!.valuesArray()!
+    precipitation: daily.variables(3)!.valuesArray()!,
+    temperature2mMax: daily.variables(4)!.valuesArray()!,
+    temperature2mMin: daily.variables(5)!.valuesArray()!,
+    uvMax: daily.variables(6)!.valuesArray()!,
+    humidity: daily.variables(7)!.valuesArray()!
   } as const
 
   return data.time.map((time, idx) => ({
     time,
-    temperature2mMax: data.temperature2mMax[idx],
+    temperature: {
+      max: data.temperature2mMax[idx],
+      min: data.temperature2mMin[idx]
+    },
     sunrise: data.sunrise[idx],
     sunset: data.sunset[idx],
-    temperature2mMin: data.temperature2mMin[idx],
-    precipitationProbabilityMax: data.precipitationProbabilityMax[idx],
-    weatherCode: data.weatherCode[idx]
+    precipitation: data.precipitation[idx],
+    weatherCode: data.weatherCode[idx],
+    uvIndex: data.uvMax[idx],
+    humidity: data.humidity[idx]
   }))
 }
 

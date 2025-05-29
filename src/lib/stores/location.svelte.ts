@@ -1,5 +1,6 @@
 import { browser } from '$app/environment'
 import type { GeoLocation } from '$lib/types/location'
+import { SvelteMap } from 'svelte/reactivity'
 
 const LOCALSTORAGE_KEY = 'wallclock.locations'
 
@@ -21,48 +22,54 @@ function saveLocations(entry: GeoLocation[]) {
 }
 
 class LocationStore {
-  #locations: GeoLocation[] = $state([])
+  // #locations: GeoLocation[] = $state([])
+
+  #data = new SvelteMap<string, GeoLocation>([])
+  #loading = $state(true)
 
   constructor() {
     if (!browser) return
-    this.#locations = loadLocations()
+    const data = loadLocations()
+    data.forEach((loc) => this.#data.set(loc.id, loc))
+    this.#loading = false
   }
-
-  #setLocations(locations: GeoLocation[]) {
-    this.#locations = locations.sort((a, b) => {
-      if (a.isFavorite && !b.isFavorite) return -1
-      if (!a.isFavorite && b.isFavorite) return 1
-      return a.name.localeCompare(b.name)
-    })
-    saveLocations(this.#locations)
+  #save() {
+    saveLocations([...this.#data.values()])
   }
-
+  get loading() {
+    return this.#loading
+  }
+  get count() {
+    return this.#data.size
+  }
   get list() {
-    return this.#locations
+    return this.#data.values()
   }
 
   add = (location: GeoLocation) => {
-    if (!this.#locations.some((e) => e.id === location.id)) {
-      this.#locations = [...this.#locations, location]
-      saveLocations(this.#locations)
-    }
+    this.#data.set(location.id, location)
+    this.#save()
   }
 
   remove = (id: string) => {
-    this.#setLocations(this.#locations.filter((e) => e.id !== id))
+    this.#data.delete(id)
+    this.#save()
   }
 
   set = (entries: GeoLocation[]) => {
-    this.#setLocations(entries)
+    this.#data.clear()
+    entries.forEach((loc) => this.#data.set(loc.id, loc))
+    this.#save()
   }
 
   clear = () => {
-    this.#setLocations([])
+    this.#data.clear()
+    this.#save()
   }
 
   has = (location: GeoLocation | string) => {
     const id = typeof location === 'string' ? location : location.id
-    return this.#locations.some((e) => e.id === id)
+    return this.#data.has(id)
   }
 
   toggle = (location: GeoLocation) => {
@@ -76,22 +83,14 @@ class LocationStore {
     // allow passing object or id only, for tests and convenience
     const id = typeof location === 'string' ? location : location.id
 
-    // idx of operated location
-    const index = this.#locations.findIndex((e) => e.id === id)
-    if (index === -1) return
-
-    const updated = this.#locations.map((loc, i) => {
-      if (i === index) {
-        // Toggle favorite for this location
-        return { ...loc, isFavorite: !loc.isFavorite }
-      }
-      // Remove favorite from any other location
-      if (loc.isFavorite && loc.id !== id) {
-        return { ...loc, isFavorite: false }
-      }
-      return loc
-    })
-    this.#setLocations(updated)
+    const item = this.#data.get(id)
+    if (!item) return
+    const prev = item.isFavorite
+    this.#data.forEach((l) => {
+      l.isFavorite = false
+    }) // reset all favorites
+    this.#data.set(id, { ...item, isFavorite: !prev })
+    this.#save()
   }
 }
 const store = new LocationStore()

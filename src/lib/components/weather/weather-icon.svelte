@@ -11,6 +11,7 @@
     Droplets
   } from '@lucide/svelte'
   import * as Tooltip from '$components/ui/tooltip'
+
   import api from '$lib/api'
 
   type WeatherIconProps = {

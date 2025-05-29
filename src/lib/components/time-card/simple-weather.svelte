@@ -4,7 +4,7 @@
   import type { GeoLocation } from '$lib/types/location'
   import api, { type WeatherData } from '$lib/api'
 
-  import WeatherIcon from '$components/weather-icon.svelte'
+  import { WeatherIcon } from '$lib/components/weather'
   import { Button } from '$components/ui/button'
   import { formatTemperature } from '$lib/utils'
   import dayjs from 'dayjs'
@@ -61,11 +61,11 @@
           <WeatherIcon code={day.weatherCode} size="sm" className="text-muted-foreground" />
           <p class="text-muted-foreground text-xs">
             <span class="font-semibold"
-              >{formatTemperature(day.temperature2mMax, { unit: false })}</span
+              >{formatTemperature(day.temperature.max, { unit: false })}</span
             >
             /
             <span class="font-thin">
-              {formatTemperature(day.temperature2mMin, { unit: false })}
+              {formatTemperature(day.temperature.min, { unit: false })}
             </span>
           </p>
           <p class="text-[.75rem] font-thin">{dayjs(day.time).format('ddd')}</p>

@@ -14,12 +14,12 @@
   const variants = tv({
     slots: {
       button: 'rounded-md',
-      icon: 'size-4 stroke-red-500 stroke-1'
+      icon: 'size-4 stroke-red-500/75 stroke-2'
     },
     variants: {
       favorite: {
-        true: { icon: 'fill-red-500/75' },
-        false: { icon: 'stroke-muted-foreground' }
+        true: { icon: 'fill-red-500/75 stroke-0' },
+        false: { icon: '' }
       }
     }
   })

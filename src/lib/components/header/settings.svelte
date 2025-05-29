@@ -3,6 +3,6 @@
   import { Settings } from '@lucide/svelte'
 </script>
 
-<Button variant="ghost">
+<Button variant="ghost" disabled>
   <Settings />
 </Button>
