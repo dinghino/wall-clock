@@ -71,3 +71,17 @@ export const uv = makeBlock<{ uvIndex: number }>(({ uvIndex }) => ({
   data: `${uvIndex.toFixed(1)}`,
   icon: Sparkles
 }))
+
+const blocks = {
+  sunrise,
+  sunset,
+  maxTemp,
+  minTemp,
+  wind,
+  precipitation,
+  humidity,
+  uv
+} as const
+
+export default blocks
+export type WeatherBlocks = keyof typeof blocks

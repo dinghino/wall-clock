@@ -9,8 +9,9 @@
       background: {
         transparent: '',
         default: cn(
-          'dark:bg-accent/50 bg-accent rounded-sm',
-          'shadow-none hover:shadow-lg shadow-black/10 dark:shadow-black/20',
+          'dark:bg-accent/50 bg-accent rounded-sm ',
+          'shadow-none',
+          'hover:shadow-lg shadow-black/10 dark:shadow-black/20',
           'transition-all duration-250 ease-in-out'
         )
       }

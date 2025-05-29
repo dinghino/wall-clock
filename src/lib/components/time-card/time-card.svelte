@@ -1,6 +1,14 @@
 <script lang="ts">
   import { onMount, type Snippet } from 'svelte'
-  import { MapPin, MoreHorizontal, RefreshCwIcon, SunIcon, MoonStarIcon } from '@lucide/svelte'
+  import {
+    MapPin,
+    MoreHorizontal,
+    RefreshCwIcon,
+    SunIcon,
+    MoonStarIcon,
+    Loader,
+    TriangleAlert
+  } from '@lucide/svelte'
   import { cn } from '$lib/utils'
   import type { GeoLocation } from '$lib/types/location'
 
@@ -13,12 +21,11 @@
 
   import WeatherCardHeader from './card-header.svelte'
   import SimpleCurrentWeather from './simple-current-weather.svelte'
-  import CardSection from './card-section.svelte'
+  import CardSection from '$components/card-section.svelte'
 
   import Actions from './actions'
   import Clock from './clock'
-  import WeatherDialog from './weather-dialog.svelte'
-  import { CurrentWeather } from '$lib/components/weather'
+  import { WeatherDialog, CurrentWeather } from '$lib/components/weather'
   import dayjs from 'dayjs'
 
   export interface TimeCardProps {
@@ -33,7 +40,7 @@
   }
   let weatherTick: number | undefined
   onMount(() => {
-    weatherTick = setInterval(() => (weather = getData()), 60 * 60 * 1000) // update every hour
+    weatherTick = setInterval(() => (weather = getData()), 15 * 60 * 1000) // update every 15 minutes
     return () => clearInterval(weatherTick)
   })
 
@@ -48,23 +55,34 @@
   class={cn(
     'relative',
     'group/card',
-    'dark:bg-muted/20 bg-muted/50',
-    'border-card hover:border-muted-foreground/20 dark:border-none',
+    'dark:bg-muted/20 bg-muted/30',
+    'border-primary/10 hover:border-muted-foreground/20',
     'w-full flex-1 gap-0 overflow-hidden rounded-md p-0',
     'shadow-none transition-all duration-200 ease-in-out'
   )}
 >
-  <WeatherCardHeader {location} background="accent" visibility="dynamic" {icon} {title} {actions} />
+  <WeatherCardHeader
+    {location}
+    background="default"
+    visibility="visible"
+    {icon}
+    {title}
+    {actions}
+  />
 
-  <Card.Content class=" relative flex flex-1 flex-row gap-2 p-4 px-2 font-mono">
+  <Card.Content class=" relative flex flex-1 flex-col gap-6 p-4 px-2">
     <Clock {timezone} show={{ utc: false, date: false, timezone: false }} />
-    {#await weather then response}
+    {#await weather}
+      <div class="grid h-16 place-items-center">
+        <Loader class="stroke-muted-foreground size-8 animate-spin" />
+      </div>
+    {:then response}
       {@const data = response[0]}
       <WeatherDialog {location} {data}>
         {#snippet trigger()}
-          <CardSection class="m-4 cursor-pointer" background="default">
-            <SimpleCurrentWeather data={data.current} layout="vertical" />
-          </CardSection>
+          <!-- <CardSection class="m-4 cursor-pointer max-w-fit mx-auto" background="default"> -->
+          <SimpleCurrentWeather data={data.current} layout="horizontal" class="justify-center" />
+          <!-- </CardSection> -->
         {/snippet}
         {#snippet current(data)}
           <CurrentWeather {location} {data} />
@@ -89,7 +107,7 @@
   {/await}
 {/snippet}
 {#snippet title()}
-  <div class="flex flex-col gap-0 mb-2">
+  <div class="mb-2 flex flex-col gap-0">
     <h2 class="text-xl font-semibold">
       {location.name}
     </h2>
@@ -103,12 +121,16 @@
 {/snippet}
 {#snippet actions()}
   {@const favorite = location.isFavorite}
-  <Actions.Favorite {favorite} onclick={() => locations.toggleFavorite(location.id)} />
-  <Actions.Delete onclick={() => locations.remove(location.id)} />
-  <Button variant="ghost" class="rounded-md" size="icon" onclick={() => handleRefresh()}>
-    <RefreshCwIcon class="stroke-muted-foreground s size-4" />
-  </Button>
-  <Button variant="ghost" class="rounded-md" size="icon" disabled>
-    <MoreHorizontal class="stroke-muted-foreground size-4" />
-  </Button>
+  <div
+    class="bg-accent text-accent-foreground absolute -right-28 rounded-l-md duration-200 ease-in-out group-hover/card:right-0 shadow-none group-hover/card:shadow-md"
+  >
+    <Actions.Favorite {favorite} onclick={() => locations.toggleFavorite(location.id)} />
+    <Actions.Delete onclick={() => locations.remove(location.id)} />
+    <Button variant="ghost" class="rounded-md" size="icon" onclick={() => handleRefresh()}>
+      <RefreshCwIcon class="stroke-muted-foreground s size-4" />
+    </Button>
+    <Button variant="ghost" class="rounded-md" size="icon" disabled>
+      <MoreHorizontal class="stroke-muted-foreground size-4" />
+    </Button>
+  </div>
 {/snippet}

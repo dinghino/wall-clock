@@ -23,8 +23,8 @@
 </script>
 
 <Dialog.Root>
-  <Dialog.Trigger>
-    {@render trigger()}
+  <Dialog.Trigger class="cursor-pointer">
+      {@render trigger()}
   </Dialog.Trigger>
   <Dialog.Content class={cn(className)}>
     <Tabs.Root value="current">
