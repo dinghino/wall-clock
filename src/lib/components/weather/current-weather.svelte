@@ -28,7 +28,7 @@
     <p class="mb-4 text-7xl">{formatTemperature(data.current.temperature2m)}</p>
     <div class="flex flex-row justify-center gap-4">
       <div class="flex flex-row items-center gap-2">
-        <ThermometerSun class="size-4 stroke-red-500/50" />
+        <ThermometerSun class="size-4 stroke-red-500/50" />``
         <p>{formatTemperature(today.temperature.max)}</p>
       </div>
 

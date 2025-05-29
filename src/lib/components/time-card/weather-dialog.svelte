@@ -33,17 +33,17 @@
       </Dialog.Header>
       <Tabs.List class="bg-accent dark:bg-accent/50 my-4 w-full flex-1 px-4">
         <Tabs.Trigger value="current" class="flex items-center gap-2 text-xs">Current</Tabs.Trigger>
-        <Tabs.Trigger disabled value="daily" class="flex items-center gap-2 text-xs">
-          Daily
+        <Tabs.Trigger disabled value="hourly" class="flex items-center gap-2 text-xs">
+          Hourly
         </Tabs.Trigger>
-        <Tabs.Trigger value="weekly" class="flex items-center gap-2 text-xs">Weekly</Tabs.Trigger>
+        <Tabs.Trigger value="daily" class="flex items-center gap-2 text-xs">Daily</Tabs.Trigger>
       </Tabs.List>
 
       <Tabs.Content value="current" class="flex-1">
         {@render current(data)}
       </Tabs.Content>
 
-      <Tabs.Content value="weekly" class="flex-1">
+      <Tabs.Content value="daily" class="flex-1">
         <DailyForecast daily={data.daily} />
       </Tabs.Content>
     </Tabs.Root>
