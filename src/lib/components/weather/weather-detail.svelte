@@ -6,37 +6,37 @@
       trigger: [
         'group/detail',
         'transition-all duration-250 ease-in-out',
-        'flex w-full flex-1 shrink-0 items-center justify-between gap-2'
+        'flex w-full flex-1 shrink-0 items-center justify-between gap-2',
       ],
-      icon: 'group-hover/detail:stroke-primary stroke-muted-foreground/50 size-6 stroke-2 transition-colors duration-200'
+      icon: 'group-hover/detail:stroke-primary stroke-muted-foreground/50 size-6 stroke-2 transition-colors duration-200',
     },
 
     variants: {
       layout: {
         vertical: {
-          trigger: 'flex-col'
+          trigger: 'flex-col',
         },
         horizontal: {
-          trigger: 'flex-row'
-        }
+          trigger: 'flex-row',
+        },
       },
       type: {
         default: {
-          trigger: ''
+          trigger: '',
         },
         card: {
           trigger: cn(
             'dark:bg-accent/50 bg-accent rounded-sm p-4',
             'shadow-none shadow-black/10 hover:shadow-lg dark:shadow-black/20'
           ),
-          icon: 'group-hover/card-section:stroke-primary'
-        }
-      }
+          icon: 'group-hover/card-section:stroke-primary',
+        },
+      },
     },
     defaultVariants: {
       type: 'card',
-      layout: 'horizontal'
-    }
+      layout: 'horizontal',
+    },
   })
 
   export type WeatherDetailProps = {

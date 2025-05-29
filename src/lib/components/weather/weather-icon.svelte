@@ -8,7 +8,7 @@
     CloudRain,
     CloudSnow,
     CloudLightning,
-    Droplets
+    Droplets,
   } from '@lucide/svelte'
   import * as Tooltip from '$components/ui/tooltip'
 
@@ -28,7 +28,7 @@
       'size-6': size === 'sm',
       'size-10': size === 'md',
       'size-16': size === 'lg',
-      'size-24': size === 'xl'
+      'size-24': size === 'xl',
     })
   )
 </script>

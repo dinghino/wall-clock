@@ -14,7 +14,7 @@
 </script>
 
 {#if locations.loading}
-  <section class="grid place-items-center gap-16 flex-1 p-4">
+  <section class="grid flex-1 place-items-center gap-16 p-4">
     <Loader class="text-primary size-10 animate-spin" />
   </section>
 {:else if locations.count === 0}

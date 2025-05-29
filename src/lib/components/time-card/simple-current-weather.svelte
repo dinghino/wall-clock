@@ -21,34 +21,34 @@
     layout,
     cursor = true,
     class: className,
-    show = { temperature: true }
+    show = { temperature: true },
   }: Props = $props()
 
   const variants = tv({
     slots: {
       wrapper: 'flex',
       icon: 'stroke-muted-foreground/50 stroke-[1.5px] flex-1',
-      text: 'text-4xl font-thin'
+      text: 'text-4xl font-thin',
     },
     variants: {
       layout: {
         default: {
-          wrapper: 'flex flex-col md:flex-row items-center gap-4'
+          wrapper: 'flex flex-col md:flex-row items-center gap-4',
         },
         horizontal: {
-          wrapper: 'flex flex-row items-center gap-6'
+          wrapper: 'flex flex-row items-center gap-6',
         },
         vertical: {
-          wrapper: 'flex flex-col items-center gap-6'
-        }
+          wrapper: 'flex flex-col items-center gap-6',
+        },
       },
       cursor: {
-        true: { wrapper: 'cursor-pointer' }
-      }
+        true: { wrapper: 'cursor-pointer' },
+      },
     },
     defaultVariants: {
-      layout: 'default'
-    }
+      layout: 'default',
+    },
   })
   const classes = variants({ layout, cursor })
 </script>

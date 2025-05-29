@@ -11,44 +11,44 @@
     slots: {
       wrapper: 'flex items-center justify-between px-4 py-2',
       icons: 'flex items-center gap-0',
-      favorite: 'size-4 stroke-red-500 stroke-1'
+      favorite: 'size-4 stroke-red-500 stroke-1',
     },
     variants: {
       background: {
         default: {
           wrapper: '',
-          icons: ''
+          icons: '',
         },
         primary: {
           wrapper: 'bg-primary text-primary-foreground',
-          icons: 'text-primary-foreground'
+          icons: 'text-primary-foreground',
         },
         accent: {
           wrapper: 'bg-accent dark:bg-accent/50 text-accent-foreground',
-          icons: 'text-accent-foreground'
-        }
+          icons: 'text-accent-foreground',
+        },
       },
       visibility: {
         visible: { wrapper: '', icons: '' },
         dynamic: {
           wrapper: '',
-          icons: 'opacity-0 transition-opacity duration-200 group-hover/card:opacity-100'
-        }
+          icons: 'opacity-0 transition-opacity duration-200 group-hover/card:opacity-100',
+        },
       },
       favorite: {
         true: {
-          favorite: 'fill-red-500/75'
+          favorite: 'fill-red-500/75',
         },
         false: {
-          favorite: ''
-        }
-      }
+          favorite: '',
+        },
+      },
     },
     defaultVariants: {
       background: 'default',
       visibility: 'dynamic',
-      favorite: false
-    }
+      favorite: false,
+    },
   })
 
   type Props = {

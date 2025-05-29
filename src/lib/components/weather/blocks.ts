@@ -19,19 +19,19 @@ type WeatherBlock<T extends object> = (
 
 export function makeBlock<T extends object>(func: WeatherBlock<T>): WeatherBlock<T> {
   return (data, opts) => ({
-    ...func(data, opts)
+    ...func(data, opts),
   })
 }
 
 export const sunrise = makeBlock<DailyForecast>((data) => ({
   title: 'Sunrise',
   data: dayjs(data.sunrise).format('HH:mm'),
-  icon: Sunrise
+  icon: Sunrise,
 }))
 export const sunset = makeBlock<DailyForecast>((data) => ({
   title: 'Sunset',
   data: dayjs(data.sunset).format('HH:mm'),
-  icon: Sunset
+  icon: Sunset,
 }))
 
 type Temperatures = { temperatures: { max: number; min: number } }
@@ -39,37 +39,37 @@ type Temperatures = { temperatures: { max: number; min: number } }
 export const maxTemp = makeBlock<Temperatures>((data) => ({
   title: 'Max Temperature',
   data: formatTemperature(data.temperatures.max),
-  icon: ThermometerSun
+  icon: ThermometerSun,
 }))
 
 export const minTemp = makeBlock<Temperatures>((data) => ({
   title: 'Min Temperature',
   data: formatTemperature(data.temperatures.min),
-  icon: ThermometerSun
+  icon: ThermometerSun,
 }))
 
 export const wind = makeBlock<{ windSpeed: number }>(({ windSpeed }) => ({
   title: 'Wind Speed',
   data: `${windSpeed.toFixed()} km/h`,
-  icon: Wind
+  icon: Wind,
 }))
 
 export const precipitation = makeBlock<{ precipitation: number }>(({ precipitation }) => ({
   title: 'Rain chance',
   data: `${precipitation.toFixed()}%`,
-  icon: Umbrella
+  icon: Umbrella,
 }))
 
 export const humidity = makeBlock<{ humidity: number }>(({ humidity }) => ({
   title: 'Humidity',
   data: `${humidity.toFixed()}%`,
-  icon: Droplets
+  icon: Droplets,
 }))
 
 export const uv = makeBlock<{ uvIndex: number }>(({ uvIndex }) => ({
   title: 'UV Index',
   data: `${uvIndex.toFixed(1)}`,
-  icon: Sparkles
+  icon: Sparkles,
 }))
 
 const blocks = {
@@ -80,7 +80,7 @@ const blocks = {
   wind,
   precipitation,
   humidity,
-  uv
+  uv,
 } as const
 
 export default blocks

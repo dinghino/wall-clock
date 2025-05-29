@@ -13,12 +13,12 @@
           'shadow-none',
           'hover:shadow-lg shadow-black/10 dark:shadow-black/20',
           'transition-all duration-250 ease-in-out'
-        )
-      }
+        ),
+      },
     },
     defaultVariants: {
-      background: 'default'
-    }
+      background: 'default',
+    },
   })
 
   type CardSectionProps = {

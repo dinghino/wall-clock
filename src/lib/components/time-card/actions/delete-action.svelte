@@ -12,9 +12,9 @@
   const variants = tv({
     slots: {
       button: 'rounded-md',
-      icon: 'stroke-muted-foreground size-4'
+      icon: 'stroke-muted-foreground size-4',
     },
-    variants: {}
+    variants: {},
   })
 
   const classes = variants()

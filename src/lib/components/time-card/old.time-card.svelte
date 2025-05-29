@@ -8,7 +8,7 @@
     SunIcon,
     MoonStarIcon,
     ClockIcon,
-    CloudSunRain
+    CloudSunRain,
   } from '@lucide/svelte'
   import { cn } from '$lib/utils'
   import type { GeoLocation } from '$lib/types/location'

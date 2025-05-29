@@ -4,5 +4,5 @@ export { FavoriteAction, DeleteAction }
 
 export default {
   Favorite: FavoriteAction,
-  Delete: DeleteAction
+  Delete: DeleteAction,
 }

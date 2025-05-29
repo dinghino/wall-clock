@@ -19,16 +19,17 @@
 
 <Header title="🕒" />
 
-<main class="z-10 bg-background flex-1 flex flex-col">
+<main class="bg-background z-10 flex flex-1 flex-col">
   <TooltipProvider>
     {@render children?.()}
   </TooltipProvider>
 </main>
 
 <footer class="sticky bottom-0 w-full">
-  <section class="container mx-auto p-4 flex flex-row justify-between items-center">
-    <p class="text-muted-foreground text-center text-sm flex items-center gap-1">
-      Made with <Heart class="size-4 fill-red-600/90 stroke-0 inline" /> by <a href="https://github.com/dinghino">dinghino</a>
+  <section class="container mx-auto flex flex-row items-center justify-between p-4">
+    <p class="text-muted-foreground flex items-center gap-1 text-center text-sm">
+      Made with <Heart class="inline size-4 fill-red-600/90 stroke-0" /> by
+      <a href="https://github.com/dinghino">dinghino</a>
     </p>
     <div>
       <Button

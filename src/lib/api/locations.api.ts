@@ -34,7 +34,7 @@ export async function search(query: string): Promise<GeoLocation[]> {
           timezone: result.timezone,
           country: result.country,
           admin1: result.admin1,
-          utcDelta: dayjs.utc().tz(result.timezone).format('Z')
+          utcDelta: dayjs.utc().tz(result.timezone).format('Z'),
         }) satisfies GeoLocation
     )
   } catch (error) {

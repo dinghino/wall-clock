@@ -33,8 +33,8 @@ const params = {
     'relative_humidity_2m',
     'precipitation',
     'rain',
-    'wind_speed_10m'
-  ]
+    'wind_speed_10m',
+  ],
 }
 
 export function makeRequestFor(location: GeoLocation) {
@@ -42,7 +42,7 @@ export function makeRequestFor(location: GeoLocation) {
     ...params,
     latitude: location.lat,
     longitude: location.lon,
-    timezone: location.timezone
+    timezone: location.timezone,
   }
 }
 
@@ -76,7 +76,7 @@ function parseCurrentWeather(data: NonNullable<ReturnType<WeatherResponse['curre
     humidity: data.variables(4)!.value(),
     precipitation: data.variables(5)!.value(),
     rain: data.variables(6)!.value(),
-    windSpeed: data.variables(7)!.value()
+    windSpeed: data.variables(7)!.value(),
   }
 }
 
@@ -104,21 +104,21 @@ function parseDailyForecast(
     temperature2mMax: daily.variables(4)!.valuesArray()!,
     temperature2mMin: daily.variables(5)!.valuesArray()!,
     uvMax: daily.variables(6)!.valuesArray()!,
-    humidity: daily.variables(7)!.valuesArray()!
+    humidity: daily.variables(7)!.valuesArray()!,
   } as const
 
   return data.time.map((time, idx) => ({
     time,
     temperature: {
       max: data.temperature2mMax[idx],
-      min: data.temperature2mMin[idx]
+      min: data.temperature2mMin[idx],
     },
     sunrise: data.sunrise[idx],
     sunset: data.sunset[idx],
     precipitation: data.precipitation[idx],
     weatherCode: data.weatherCode[idx],
     uvIndex: data.uvMax[idx],
-    humidity: data.humidity[idx]
+    humidity: data.humidity[idx],
   }))
 }
 
@@ -141,7 +141,7 @@ function parseWeatherResponse(data: WeatherResponse) {
     longitude,
     current: {
       time: new Date((Number(current.time()) + utcOffsetSeconds) * 1000),
-      ...parseCurrentWeather(current)
+      ...parseCurrentWeather(current),
     },
     hourly: {
       // time: buildTimeArray(Number(hourly.time()), Number(hourly.timeEnd()), hourly.interval()),
@@ -153,7 +153,7 @@ function parseWeatherResponse(data: WeatherResponse) {
       //   precipitationProbability: hourly.variables(2)!.valuesArray()!,
       //   weatherCode: hourly.variables(3)!.valuesArray()!
     },
-    daily: parseDailyForecast(daily, utcOffsetSeconds)
+    daily: parseDailyForecast(daily, utcOffsetSeconds),
   }
 }
 
@@ -188,7 +188,7 @@ export function getWeatherDescription(code: number): string {
     86: 'Heavy snow showers',
     95: 'Thunderstorm',
     96: 'Thunderstorm with slight hail',
-    99: 'Thunderstorm with heavy hail'
+    99: 'Thunderstorm with heavy hail',
   }
 
   return weatherCodes[code] || 'Unknown'

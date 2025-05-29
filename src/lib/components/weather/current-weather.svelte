@@ -17,14 +17,13 @@
 </script>
 
 <div class="my-4 mb-16 flex flex-row items-center justify-center gap-6">
-
   <WeatherIcon
     size="xl"
     code={data.current.weatherCode}
     className={cn('stroke-accent-foreground stroke-2 flex-1')}
   />
 
-   <div>
+  <div>
     <p class="mb-4 text-7xl">{formatTemperature(data.current.temperature2m)}</p>
     <div class="flex flex-row justify-center gap-4">
       <div class="flex flex-row items-center gap-2">
@@ -38,7 +37,6 @@
       </div>
     </div>
   </div>
-
 </div>
 
 <div class="flex flex-col gap-4">

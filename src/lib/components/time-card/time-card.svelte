@@ -7,7 +7,7 @@
     SunIcon,
     MoonStarIcon,
     Loader,
-    TriangleAlert
+    TriangleAlert,
   } from '@lucide/svelte'
   import { cn } from '$lib/utils'
   import type { GeoLocation } from '$lib/types/location'

@@ -18,9 +18,9 @@ export default ts.config(
   ...svelte.configs.prettier,
   {
     languageOptions: {
-      globals: { ...globals.browser, ...globals.node }
+      globals: { ...globals.browser, ...globals.node },
     },
-    rules: { 'no-undef': 'off', semi: ['error', 'never'] }
+    rules: { 'no-undef': 'off', semi: ['error', 'never'] },
   },
   {
     files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
@@ -29,8 +29,8 @@ export default ts.config(
         projectService: true,
         extraFileExtensions: ['.svelte'],
         parser: ts.parser,
-        svelteConfig
-      }
-    }
+        svelteConfig,
+      },
+    },
   }
 )
